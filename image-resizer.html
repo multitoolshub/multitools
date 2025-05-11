@@ -1,521 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Resizer Tool</title>
-    <style>
-        :root {
-            --primary-color: #0066ff;
-            --primary-light: #e6f0ff;
-            --white: #ffffff;
-            --gray: #f5f5f5;
-            --dark-gray: #777777;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Resizer Tool</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            background-color: var(--white);
-            color: #333;
-            line-height: 1.6;
-        }
+    .container {
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f0faff;
+      border: 2px solid #00aaff;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 170, 255, 0.2);
+    }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    h2 {
+      text-align: center;
+      color: #00aaff;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    input[type="file"],
+    input[type="number"],
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
 
-        h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 2.2rem;
-        }
+    button {
+      background: #00aaff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
 
-        .description {
-            color: var(--dark-gray);
-            margin-bottom: 20px;
-        }
+    button:hover {
+      background: #0088cc;
+    }
 
-        .tool-container {
-            background-color: var(--gray);
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .preview-container {
+      text-align: center;
+      margin-top: 20px;
+    }
 
-        .upload-section {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 30px;
-            border: 2px dashed var(--primary-color);
-            border-radius: 8px;
-            background-color: var(--primary-light);
-            transition: all 0.3s ease;
-        }
+    img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
 
-        .upload-section:hover {
-            background-color: rgba(0, 102, 255, 0.1);
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .upload-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .upload-btn:hover {
-            background-color: #0052cc;
-        }
-
-        .file-name {
-            margin-top: 15px;
-            font-size: 14px;
-            color: var(--dark-gray);
-        }
-
-        .controls-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .dimension-controls {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .control-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        input[type="number"], 
-        input[type="range"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        input[type="range"] {
-            padding: 0;
-            height: 8px;
-            -webkit-appearance: none;
-            background: #ddd;
-            border-radius: 5px;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .checkbox-group input {
-            margin-right: 10px;
-        }
-
-        .preview-section {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .preview-title {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .image-container {
-            margin: 0 auto;
-            max-width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-            background-color: var(--white);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        #previewImage {
-            max-width: 100%;
-            display: block;
-        }
-
-        .action-btns {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .download-btn {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .download-btn:hover {
-            background-color: #0052cc;
-        }
-
-        .reset-btn {
-            background-color: white;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-        }
-
-        .reset-btn:hover {
-            background-color: var(--primary-light);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .aspect-ratio-info {
-            font-size: 14px;
-            color: var(--dark-gray);
-            margin-top: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .controls-section {
-                flex-direction: column;
-            }
-            
-            .dimension-controls {
-                width: 100%;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .action-btns {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .action-btn {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .tool-container {
-                padding: 15px;
-            }
-            
-            .upload-section {
-                padding: 20px 15px;
-            }
-        }
-    </style>
+    @media screen and (max-width: 600px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Image Resizer</h1>
-            <p class="description">Resize your images to any dimensions while maintaining quality</p>
-        </header>
 
-        <div class="tool-container">
-            <div class="upload-section" id="dropArea">
-                <div class="upload-icon">📁</div>
-                <h3>Upload Your Image</h3>
-                <p>Drag & drop your image here or click to browse</p>
-                <input type="file" id="fileInput" class="file-input" accept="image/*">
-                <button class="upload-btn" id="uploadBtn">Select Image</button>
-                <div class="file-name" id="fileName">No file selected</div>
-            </div>
+  <div class="container">
+    <h2>Image Resizer Tool</h2>
+    <input type="file" id="upload" accept="image/*">
+    <input type="number" id="width" placeholder="Enter new width (px)">
+    <input type="number" id="height" placeholder="Enter new height (px)">
+    <button onclick="resizeImage()">Resize Image</button>
 
-            <div class="controls-section">
-                <div class="dimension-controls">
-                    <div class="control-group">
-                        <label for="width">Width (px)</label>
-                        <input type="number" id="width" min="1" placeholder="Width">
-                        <input type="range" id="widthRange" min="1" max="2000" value="800">
-                    </div>
-                    <div class="control-group">
-                        <label for="height">Height (px)</label>
-                        <input type="number" id="height" min="1" placeholder="Height">
-                        <input type="range" id="heightRange" min="1" max="2000" value="600">
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="maintainAspect" checked>
-                        <label for="maintainAspect">Maintain aspect ratio</label>
-                    </div>
-                    <div class="aspect-ratio-info" id="aspectRatioInfo">Original aspect ratio: -</div>
-                </div>
-            </div>
-
-            <div class="preview-section hidden" id="previewSection">
-                <h3 class="preview-title">Preview</h3>
-                <div class="image-container">
-                    <img id="previewImage" src="" alt="Resized preview">
-                </div>
-                <div class="action-btns">
-                    <button class="action-btn download-btn" id="downloadBtn">Download Resized Image</button>
-                    <button class="action-btn reset-btn" id="resetBtn">Reset</button>
-                </div>
-            </div>
-        </div>
+    <div class="preview-container">
+      <canvas id="canvas" style="display:none;"></canvas>
+      <img id="preview" alt="Resized Preview" />
+      <a id="downloadLink" style="display:none;" download="resized-image.png">
+        <button style="margin-top:10px;">Download Resized Image</button>
+      </a>
     </div>
+  </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM elements
-            const fileInput = document.getElementById('fileInput');
-            const uploadBtn = document.getElementById('uploadBtn');
-            const fileName = document.getElementById('fileName');
-            const dropArea = document.getElementById('dropArea');
-            const widthInput = document.getElementById('width');
-            const heightInput = document.getElementById('height');
-            const widthRange = document.getElementById('widthRange');
-            const heightRange = document.getElementById('heightRange');
-            const maintainAspectCheckbox = document.getElementById('maintainAspect');
-            const aspectRatioInfo = document.getElementById('aspectRatioInfo');
-            const previewSection = document.getElementById('previewSection');
-            const previewImage = document.getElementById('previewImage');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const resetBtn = document.getElementById('resetBtn');
+  <script>
+    let originalImage = new Image();
 
-            // Variables
-            let originalImage = null;
-            let originalWidth = 0;
-            let originalHeight = 0;
-            let aspectRatio = 0;
-            let isDragging = false;
+    document.getElementById('upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          originalImage.onload = () => {
+            document.getElementById('preview').src = originalImage.src;
+          };
+          originalImage.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
 
-            // Event listeners
-            uploadBtn.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', handleFileSelect);
-            dropArea.addEventListener('dragover', handleDragOver);
-            dropArea.addEventListener('dragleave', handleDragLeave);
-            dropArea.addEventListener('drop', handleDrop);
-            widthInput.addEventListener('input', updateWidth);
-            heightInput.addEventListener('input', updateHeight);
-            widthRange.addEventListener('input', updateWidthFromRange);
-            heightRange.addEventListener('input', updateHeightFromRange);
-            maintainAspectCheckbox.addEventListener('change', toggleAspectRatio);
-            downloadBtn.addEventListener('click', downloadImage);
-            resetBtn.addEventListener('click', resetTool);
+    function resizeImage() {
+      const width = parseInt(document.getElementById('width').value);
+      const height = parseInt(document.getElementById('height').value);
 
-            // Functions
-            function handleFileSelect(e) {
-                const file = e.target.files[0];
-                if (file && file.type.match('image.*')) {
-                    processImage(file);
-                }
-            }
+      if (!width || !height || isNaN(width) || isNaN(height)) {
+        alert("Please enter valid width and height.");
+        return;
+      }
 
-            function handleDragOver(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                dropArea.style.backgroundColor = 'rgba(0, 102, 255, 0.2)';
-                isDragging = true;
-            }
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
 
-            function handleDragLeave(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (!isDragging) return;
-                dropArea.style.backgroundColor = '';
-                isDragging = false;
-            }
+      canvas.width = width;
+      canvas.height = height;
 
-            function handleDrop(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                dropArea.style.backgroundColor = '';
-                isDragging = false;
+      ctx.drawImage(originalImage, 0, 0, width, height);
 
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.match('image.*')) {
-                    processImage(file);
-                    fileInput.files = e.dataTransfer.files;
-                }
-            }
+      const dataURL = canvas.toDataURL("image/png");
 
-            function processImage(file) {
-                fileName.textContent = file.name;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    originalImage = new Image();
-                    originalImage.onload = function() {
-                        originalWidth = this.width;
-                        originalHeight = this.height;
-                        aspectRatio = originalWidth / originalHeight;
-                        
-                        // Update UI
-                        aspectRatioInfo.textContent = `Original aspect ratio: ${originalWidth}:${originalHeight} (${aspectRatio.toFixed(2)})`;
-                        widthInput.value = originalWidth;
-                        heightInput.value = originalHeight;
-                        widthRange.value = originalWidth;
-                        heightRange.value = originalHeight;
-                        widthRange.max = originalWidth * 2;
-                        heightRange.max = originalHeight * 2;
-                        
-                        // Show preview
-                        previewImage.src = e.target.result;
-                        previewSection.classList.remove('hidden');
-                    };
-                    originalImage.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+      document.getElementById('preview').src = dataURL;
 
-            function updateWidth() {
-                const newWidth = parseInt(widthInput.value);
-                if (isNaN(newWidth) return;
-                
-                widthRange.value = newWidth;
-                
-                if (maintainAspectCheckbox.checked && originalWidth) {
-                    const newHeight = Math.round(newWidth / aspectRatio);
-                    heightInput.value = newHeight;
-                    heightRange.value = newHeight;
-                }
-                
-                updatePreview();
-            }
+      const downloadLink = document.getElementById('downloadLink');
+      downloadLink.href = dataURL;
+      downloadLink.style.display = 'block';
+    }
+  </script>
 
-            function updateHeight() {
-                const newHeight = parseInt(heightInput.value);
-                if (isNaN(newHeight)) return;
-                
-                heightRange.value = newHeight;
-                
-                if (maintainAspectCheckbox.checked && originalHeight) {
-                    const newWidth = Math.round(newHeight * aspectRatio);
-                    widthInput.value = newWidth;
-                    widthRange.value = newWidth;
-                }
-                
-                updatePreview();
-            }
-
-            function updateWidthFromRange() {
-                widthInput.value = widthRange.value;
-                updateWidth();
-            }
-
-            function updateHeightFromRange() {
-                heightInput.value = heightRange.value;
-                updateHeight();
-            }
-
-            function toggleAspectRatio() {
-                if (maintainAspectCheckbox.checked && originalWidth) {
-                    aspectRatio = originalWidth / originalHeight;
-                    updateWidth();
-                }
-            }
-
-            function updatePreview() {
-                if (!originalImage) return;
-                
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const newWidth = parseInt(widthInput.value) || 1;
-                const newHeight = parseInt(heightInput.value) || 1;
-                
-                canvas.width = newWidth;
-                canvas.height = newHeight;
-                
-                ctx.drawImage(originalImage, 0, 0, newWidth, newHeight);
-                
-                previewImage.src = canvas.toDataURL('image/png');
-            }
-
-            function downloadImage() {
-                if (!previewImage.src) return;
-                
-                const link = document.createElement('a');
-                link.download = `resized-${fileName.textContent || 'image'}`;
-                link.href = previewImage.src;
-                link.click();
-            }
-
-            function resetTool() {
-                fileInput.value = '';
-                fileName.textContent = 'No file selected';
-                originalImage = null;
-                originalWidth = 0;
-                originalHeight = 0;
-                aspectRatio = 0;
-                
-                widthInput.value = '';
-                heightInput.value = '';
-                widthRange.value = 800;
-                heightRange.value = 600;
-                widthRange.max = 2000;
-                heightRange.max = 2000;
-                
-                aspectRatioInfo.textContent = 'Original aspect ratio: -';
-                previewSection.classList.add('hidden');
-                maintainAspectCheckbox.checked = true;
-            }
-        });
-    </script>
 </body>
 </html>
