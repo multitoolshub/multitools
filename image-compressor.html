@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Compressor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #f9f9f9;
+      color: #222;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      background: #ffffff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      margin-top: 40px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #007bff;
+    }
+
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    #preview {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      display: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #downloadLink {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #downloadLink a {
+      text-decoration: none;
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Image Compressor Tool</h2>
+  <input type="file" id="uploadImage" accept="image/*" />
+  <img id="preview" alt="Preview" />
+  <button onclick="compressImage()">Compress Image</button>
+  <div id="downloadLink"></div>
+</div>
+
+<script>
+  const uploadImage = document.getElementById('uploadImage');
+  const preview = document.getElementById('preview');
+  const downloadLink = document.getElementById('downloadLink');
+  let imageFile;
+
+  uploadImage.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file && file.type.startsWith('image/')) {
+      imageFile = file;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        downloadLink.innerHTML = '';
+        downloadLink.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please upload a valid image file.');
+    }
+  });
+
+  function compressImage() {
+    if (!imageFile) return alert('Please upload an image first.');
+
+    const quality = 0.6; // 0.0 to 1.0 (lower = smaller file size)
+
+    const reader = new FileReader();
+    reader.readAsDataURL(imageFile);
+
+    reader.onload = function (event) {
+      const img = new Image();
+      img.src = event.target.result;
+
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        const maxWidth = 800;
+        const scaleSize = maxWidth / img.width;
+        canvas.width = maxWidth;
+        canvas.height = img.height * scaleSize;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(function (blob) {
+          const url = URL.createObjectURL(blob);
+          downloadLink.innerHTML = `<a href="${url}" download="compressed-image.jpg">Download Compressed Image</a>`;
+          downloadLink.style.display = 'block';
+        }, 'image/jpeg', quality);
+      };
+    };
+  }
+</script>
+
+</body>
+</html>
